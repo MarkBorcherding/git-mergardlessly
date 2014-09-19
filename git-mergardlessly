@@ -42,4 +42,4 @@ collect_message
 
 [ -z "${branch}" ] && error_usage
 
-echo "git commit-tree HEAD^{tree} -p ${branch} -p HEAD -f ${COMMIT_MESSAGE} | xargs git merge --ff-only"
+git commit-tree HEAD^{tree} -p ${branch} -p HEAD -F ${COMMIT_MESSAGE} | xargs git merge --ff-only
