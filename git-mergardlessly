@@ -1,0 +1,45 @@
+#!/bin/sh
+
+function collect_message {
+  COMMIT_MESSAGE=`mktemp /tmp/commit_message.XXXXXXXXXXXXXXXXXXXXXX` || exit 1
+
+  if [ -z "${message}" ]; then
+    $EDITOR $COMMIT_MESSAGE
+  else
+    echo ${message} > $COMMIT_MESSAGE
+  fi
+
+  [ $? != 0 ] && error_usage
+  [ ! -s $COMMIT_MESSAGE ] && error_usage
+}
+
+function error_usage {
+  echo "Usage: git mergardlessly [-m message] <ref>"
+  exit 1
+}
+
+while getopts "m:x" opt; do
+  case "$opt" in
+    m) message=$OPTARG
+    ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      error_usage
+    ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      error_usage
+    ;;
+  esac
+done
+shift $((OPTIND-1))
+
+[ "$1" = "--" ] && shift
+[ ! -z "$2" ] && error_usage
+
+branch=$1
+collect_message
+
+[ -z "${branch}" ] && error_usage
+
+echo "git commit-tree HEAD^{tree} -p ${branch} -p HEAD -f ${COMMIT_MESSAGE} | xargs git merge --ff-only"
