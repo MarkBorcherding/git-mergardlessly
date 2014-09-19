@@ -54,3 +54,16 @@ Even if we scripted that dance, it still feels rather sloppy.
 ## Git mergagrdlessly
 
 What I want is a way to create a merge commit between two branches regardless, or irregardless, of if its needed. Enter `git mergardlessly`.
+
+With a `mergeardlessly` merge you would end up with the following:
+
+```
+     master
+        v
+A---B---C-----------G my-feature
+         \         /
+          D---E---F
+
+```
+
+Subsequent merges of `my-feature` into `master` would be a `--ff-only` and the SHA that was staged through QA testing is exactly the same as what runs in `master` on production.
